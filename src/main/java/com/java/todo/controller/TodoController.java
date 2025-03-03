@@ -6,6 +6,7 @@ import com.java.todo.service.TodoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class TodoController {
         this.todoService = todoService;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/addTodo")
     public ResponseEntity<TodoDto> addTodo(@RequestBody TodoDto todo) {
         log.info("Request received to add todo [{}]", todo);
@@ -34,6 +36,7 @@ public class TodoController {
         return new ResponseEntity<>(todoDto, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("getTodo/{id}")
     public ResponseEntity<TodoDto> getTodo(@PathVariable("id") long id) {
         log.info("Request received to get todo id :: [{}]", id);
@@ -47,6 +50,7 @@ public class TodoController {
         return ResponseEntity.ok(todoDto);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/getAllTodos")
     public ResponseEntity<List<TodoDto>> getAllTodos() {
         log.info("Request received to get all todos.");
@@ -60,6 +64,7 @@ public class TodoController {
         return ResponseEntity.ok(todoList);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/updateTodo/{id}")
     public ResponseEntity<TodoDto> updateTodo(@PathVariable("id") long id, @RequestBody TodoDto todoDto) {
         log.info("Request received to update todo with id :: [{}]", id);
@@ -76,6 +81,7 @@ public class TodoController {
         return ResponseEntity.ok(updatedTodo);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/deleteTodo/{id}")
     public ResponseEntity<String> deleteTodo(@PathVariable("id") long todoId) {
         log.info("Request received to delete todo with id :: [{}]", todoId);
@@ -89,6 +95,7 @@ public class TodoController {
         return ResponseEntity.ok("Todo deleted successfully");
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PatchMapping("completeTodo/{id}")
     public ResponseEntity<TodoDto> completeTodo(@PathVariable("id") long todoId){
         log.info("Request received to mark the todo complete for todoId :: [{}]", todoId);
@@ -101,6 +108,7 @@ public class TodoController {
         return ResponseEntity.ok(completeTodo);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PatchMapping("inCompleteTodo/{id}")
     public ResponseEntity<TodoDto> inCompleteTodo(@PathVariable("id") long todoId){
         log.info("Request received to mark the todo complete for todoId :: [{}]", todoId);
